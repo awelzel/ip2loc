@@ -51,14 +51,6 @@ public class Database {
        properties.setUrl(url);
        properties.setDriverClassName(driver);
        ip2loc_db_pool = new DataSource(properties);
-
-       try {
-           if (!ip2loc_db_pool.getConnection().isValid(1)) {
-               throw new DatabaseError("Could not create connection for " + ip2loc_db_pool);
-           }
-       } catch (SQLException e) {
-           throw new DatabaseError(e);
-       }
    }
 
     public Map<String, Object> lookupIp(long ipVal) throws DatabaseError {
@@ -82,8 +74,8 @@ public class Database {
             }
             return data;
         } catch (SQLException e) {
-            logger.error("UGH:", e);
-            throw new DatabaseError(e);
+            logger.error("Database: ", e);
+            throw new DatabaseError("database error");
         } finally {
             if (rs != null) {
                 try {
@@ -105,8 +97,8 @@ public class Database {
     }
 
     void destroy() {
-        logger.info("Database.destroy()");
-        if (ip2loc_db_pool != null)
-            ip2loc_db_pool.close();;
+        if (ip2loc_db_pool != null) {
+            ip2loc_db_pool.close();
+        }
     }
 }

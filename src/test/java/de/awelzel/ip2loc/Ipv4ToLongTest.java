@@ -1,6 +1,5 @@
-package de.awelzel;
+package de.awelzel.ip2loc;
 
-import de.awelzel.ip2loc.Ip2LocServlet;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

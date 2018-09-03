@@ -1,6 +1,5 @@
-package de.awelzel;
+package de.awelzel.ip2loc;
 
-import de.awelzel.ip2loc.Ip2LocServlet;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
@@ -13,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -100,5 +100,28 @@ public class Ip2LocServletTest {
         JSONObject data = obj.getJSONObject("data");
         assertEquals("United States", data.getString("country_name"));
         assertEquals("Mountain View", data.getString("city_name"));
+    }
+
+    @Test
+    public void testDatabaseError() throws ServletException, IOException {
+        Path curPath = Paths.get("").toAbsolutePath();
+        Path dbPath = Paths.get(curPath.toString(),"data", UUID.randomUUID().toString());
+        Path dbUrl = Paths.get("jdbc:sqlite:", dbPath.toString());
+        servlet = new Ip2LocServlet();
+        servlet.init("org.sqlite.JDBC", dbUrl.toString());
+
+        when(mockReq.getParameter("ip")).thenReturn("8.8.8.8");
+        servlet.doGet(mockReq, mockResp);
+        respPrintWriter.flush();
+        verify(mockReq).getParameter("ip");
+
+        JSONObject obj = new JSONObject(respBaos.toString());
+        assertFalse(obj.getBoolean("success"));
+        JSONArray errors = obj.getJSONArray("errors");
+        assertEquals(1, errors.length());
+        JSONObject error = errors.getJSONObject(0);
+        assertEquals("database error", error.get("message"));
+
+        assertTrue(dbPath.toFile().delete());
     }
 }
