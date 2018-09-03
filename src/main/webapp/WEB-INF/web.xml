@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+  <display-name>ip2loc</display-name>
+
+  <context-param>
+    <param-name>ip2loc_db_driver</param-name>
+    <param-value>org.sqlite.JDBC</param-value>
+  </context-param>
+  <context-param>
+    <param-name>ip2loc_db_url</param-name>
+    <param-value>jdbc:sqlite:/var/lib/ip2loc.db</param-value>
+  </context-param>
+  <servlet>
+    <servlet-name>Ip2LocServlet</servlet-name>
+    <servlet-class>de.awelzel.ip2loc.Ip2LocServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Ip2LocServlet</servlet-name>
+    <url-pattern>/lookup</url-pattern>
+  </servlet-mapping>
+</web-app>
